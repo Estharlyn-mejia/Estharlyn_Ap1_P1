@@ -57,7 +57,51 @@
                         Restablcer
                     </button>
                 </div>
+
+                <table class="table table-bordered mt-3 text-center">
+                    <thead>
+                        <tr>
+                            <th>Autor Id</th>
+                            <th>Nombre</th>
+                            <th>Nacimento</th>
+                            <th>Fecha Nacimiento</th>
+                            <th>Sueldo</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var libro in listaModels){
+                            <tr>
+                                <td>
+                                    @libro.IdAutor
+                                </td>
+                                <td>
+                                    @libro.Nombres
+                                </td>
+                                <td>
+                                    @libro.Nacionalidad
+                                </td>
+                                <td>
+                                    @libro.Sueldo
+                                </td>
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-outline-warning"
+                                            @onclick="">
+                                        Editar
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-outline-danger"
+                                            @onclick="">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
+            <strong>Conteo:</strong>
         </div>
     </div>
 </div>
