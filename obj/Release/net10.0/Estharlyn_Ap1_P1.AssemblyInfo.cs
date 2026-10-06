@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Estharlyn_Ap1_P1")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e40af12ecafd092b4cc85e8f135cd81083c2ff9a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Estharlyn_Ap1_P1")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Estharlyn_Ap1_P1")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

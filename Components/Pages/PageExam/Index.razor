@@ -1,14 +1,18 @@
 @page "/Index"
 @inject Services1 Autorservices
 @inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <PageTitle>Autores</PageTitle>
 
 <div class="container">
     <div class="card shadow-lg">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Consulta de autores</h5>
-            <button class="btn btn-primary" @onclick="MostrarPantallaCrear">Crear</button>
+            <h5 class="text-center">Consulta de autores</h5>
+            <button class="btn btn-primary" 
+                    @onclick="MostrarPantallaCrear">
+                    Crear
+            </button>
         </div>
 
         <div class="card-body">
@@ -16,12 +20,24 @@
                 <div class="col-md-3">
                     <label class="form-label" for="filtro">Filtrar por</label>
                     <select id="filtro" class="form-select" @bind="filtro">
-                        <option value="">Todos los campos</option>
-                        <option value="IdAutor">Id</option>
-                        <option value="Nombres">Nombres</option>
-                        <option value="Nacionalidad">Nacionalidad</option>
-                        <option value="FechaNacimiento">Fecha de nacimiento</option>
-                        <option value="Sueldo">Sueldo</option>
+                        <option value="">
+                            Todos los campos
+                        </option>
+                        <option value="IdAutor">
+                            Id
+                        </option>
+                        <option value="Nombres">
+                            Nombres
+                        </option>
+                        <option value="Nacionalidad">
+                            Nacionalidad
+                        </option>
+                        <option value="FechaNacimiento">
+                            Fecha de nacimiento
+                        </option>
+                        <option value="Sueldo">
+                            Sueldo
+                        </option>
                     </select>
                 </div>
                 <div class="col-md-5">
@@ -117,7 +133,7 @@
         valorFiltro = string.Empty;
     }
 
-    private void MostrarPantallaCrear() => Navigation.NavigateTo("/Crear");
+    private void MostrarPantallaCrear(){Navigation.NavigateTo("/Crear");}
 
-    private void MostrarPantallaEditar(int idAutor) => Navigation.NavigateTo($"/Editar/{idAutor}");
+    private void MostrarPantallaEditar(int idAutor) { Navigation.NavigateTo($"/Editar/{idAutor}");}
 }
