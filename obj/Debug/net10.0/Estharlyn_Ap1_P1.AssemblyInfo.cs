@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Estharlyn_Ap1_P1")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d30b8392ca4afe3a27571cc2a942cd4f2711fc07")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+adb42d39990def35552bf4073fdd3116bcc972de")]
 [assembly: System.Reflection.AssemblyProductAttribute("Estharlyn_Ap1_P1")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Estharlyn_Ap1_P1")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

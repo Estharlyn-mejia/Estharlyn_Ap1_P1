@@ -1,113 +1,123 @@
 @page "/Index"
+@inject Services1 Autorservices
 @inject NavigationManager Navigation
 
-<PageTitle>Titulo</PageTitle>
+<PageTitle>Autores</PageTitle>
 
 <div class="container">
     <div class="card shadow-lg">
-        <div class="card-header d-flex justify-content-between align-items-center" style="height: 54px;">
-            <h5 class="mb-0">Consulta</h5>
-            <a class="btn btn-primary" href="/Libro/Create">Crear</a>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Consulta de autores</h5>
+            <button class="btn btn-primary" @onclick="MostrarPantallaCrear">Crear</button>
         </div>
 
         <div class="card-body">
-            <div class="row">
-
-                <div class="col-3">
-                    <label class="form-label" for="filtro">
-                        <strong>Filtrar por</strong>
-                    </label>
-                </div>
-
-                <div class="col-4">
-                    <label class="form-label" for="valorFiltro">
-                        <strong>Busca</strong>
-                    </label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    <select class="form-select" @bind="filtro">
-                            <option value="">
-                                Elige una opcion
-                            </option>
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label" for="filtro">Filtrar por</label>
+                    <select id="filtro" class="form-select" @bind="filtro">
+                        <option value="">Todos los campos</option>
+                        <option value="IdAutor">Id</option>
+                        <option value="Nombres">Nombres</option>
+                        <option value="Nacionalidad">Nacionalidad</option>
+                        <option value="FechaNacimiento">Fecha de nacimiento</option>
+                        <option value="Sueldo">Sueldo</option>
                     </select>
                 </div>
-
-                @*Busquedad*@
-                <div class="col-4">
-                    <div class="input-group">
-                        <input class="form-control"
-                                @bind="valorFiltro"
-                                placeholder="Buscar"/>
-
-                        <button type="form-label"
-                                class="btn btn-outline-primary"
-                                @onclick="">
-                            Buscar
-                        </button>
-                    </div>
+                <div class="col-md-5">
+                    <label class="form-label" for="valorFiltro">Buscar</label>
+                    <input id="valorFiltro" class="form-control" @bind="valorFiltro" @bind:event="oninput" placeholder="Escribe para buscar" />
                 </div>
-
-                @*Restablecer*@
                 <div class="col-auto">
-                    <button type="button"
-                            class="btn btn-outline-secondary"
-                            @onclick="">
-                        Restablcer
-                    </button>
+                    <button type="button" class="btn btn-outline-primary" @onclick="Buscar">Buscar</button>
+                    <button type="button" class="btn btn-outline-secondary ms-2" @onclick="Restablecer">Restablecer</button>
                 </div>
+            </div>
 
-                <table class="table table-bordered mt-3 text-center">
+            <div class="table-responsive">
+                <table class="table table-bordered mt-3 text-center align-middle">
                     <thead>
                         <tr>
                             <th>Autor Id</th>
-                            <th>Nombre</th>
-                            <th>Nacimento</th>
-                            <th>Fecha Nacimiento</th>
+                            <th>Nombres</th>
+                            <th>Nacionalidad</th>
+                            <th>Fecha de nacimiento</th>
                             <th>Sueldo</th>
-                            <th>Accion</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach(var libro in listaModels){
+                        @foreach (var autor in listaAutores)
+                        {
                             <tr>
+                                <td>@autor.IdAutor</td>
+                                <td>@autor.Nombres</td>
+                                <td>@autor.Nacionalidad</td>
+                                <td>@autor.FechaNacimiento.ToString("yyyy-MM-dd")</td>
+                                <td>@autor.Sueldo</td>
                                 <td>
-                                    @libro.IdAutor
-                                </td>
-                                <td>
-                                    @libro.Nombres
-                                </td>
-                                <td>
-                                    @libro.Nacionalidad
-                                </td>
-                                <td>
-                                    @libro.Sueldo
-                                </td>
-                                <td>
-                                    <button type="button"
-                                            class="btn btn-outline-warning"
-                                            @onclick="">
-                                        Editar
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-outline-danger"
-                                            @onclick="">
-                                        Eliminar
-                                    </button>
+                                    <button type="button" class="btn btn-outline-warning" @onclick="() => MostrarPantallaEditar(autor.IdAutor)">Editar</button>
                                 </td>
                             </tr>
+                        }
+                        @if (listaAutores.Count == 0)
+                        {
+                            <tr><td colspan="6">No hay autores para mostrar.</td></tr>
                         }
                     </tbody>
                 </table>
             </div>
-            <strong>Conteo:</strong>
+            <strong>Conteo: @listaAutores.Count</strong>
         </div>
     </div>
 </div>
 
-@code{
-    public List<Modelo1> listaModels {get; set;} = [];
-    public string? filtro {get; set;}
-    public string? valorFiltro{get; set;}
+@code {
+    private List<Modelo1> listaAutores { get; set; } = [];
+    private string? filtro;
+    private string? valorFiltro;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaAutores = await Autorservices.ObtenerTodos();
+    }
+
+    private async Task Buscar()
+    {
+        var autores = await Autorservices.ObtenerTodos();
+        if (string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            listaAutores = autores;
+            return;
+        }
+
+        var termino = valorFiltro.Trim();
+        listaAutores = filtro switch
+        {
+            "IdAutor" => int.TryParse(termino, out var id)
+                ? autores.Where(autor => autor.IdAutor == id).ToList()
+                : [],
+            "Nombres" => autores.Where(autor => autor.Nombres.Contains(termino, StringComparison.OrdinalIgnoreCase)).ToList(),
+            "Nacionalidad" => autores.Where(autor => autor.Nacionalidad.Contains(termino, StringComparison.OrdinalIgnoreCase)).ToList(),
+            "FechaNacimiento" => autores.Where(autor => autor.FechaNacimiento.ToString("yyyy-MM-dd").Contains(termino, StringComparison.OrdinalIgnoreCase)).ToList(),
+            "Sueldo" => autores.Where(autor => autor.Sueldo.ToString().Contains(termino, StringComparison.OrdinalIgnoreCase)).ToList(),
+            _ => autores.Where(autor =>
+                autor.Nombres.Contains(termino, StringComparison.OrdinalIgnoreCase) ||
+                autor.Nacionalidad.Contains(termino, StringComparison.OrdinalIgnoreCase) ||
+                autor.IdAutor.ToString().Contains(termino, StringComparison.OrdinalIgnoreCase) ||
+                autor.FechaNacimiento.ToString("yyyy-MM-dd").Contains(termino, StringComparison.OrdinalIgnoreCase) ||
+                autor.Sueldo.ToString().Contains(termino, StringComparison.OrdinalIgnoreCase)).ToList()
+        };
+    }
+
+    private async Task Restablecer()
+    {
+        listaAutores = await Autorservices.ObtenerTodos();
+        filtro = string.Empty;
+        valorFiltro = string.Empty;
+    }
+
+    private void MostrarPantallaCrear() => Navigation.NavigateTo("/Crear");
+
+    private void MostrarPantallaEditar(int idAutor) => Navigation.NavigateTo($"/Editar/{idAutor}");
 }

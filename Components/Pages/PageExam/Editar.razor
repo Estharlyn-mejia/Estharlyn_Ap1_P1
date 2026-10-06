@@ -1,2 +1,198 @@
-@page "/Editar{libro: IdAutor}"
+@page "/Editar/{IdAutor:int}"
+@inject Services1 Autorservices
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
+<PageTitle>Editar Autor</PageTitle>
+
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header text-center">
+            <h3>Editar Autor</h3>
+        </div>
+
+        @if (autor is not null)
+        {
+            <EditForm Model="autor" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label" for="IdAutor">Autor Id</label>
+                        <InputNumber id="IdAutor" 
+                                    class="form-control" 
+                                    @bind-Value="autor.IdAutor" d
+                                    isabled />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="Nombres">
+                            <strong>Nombres</strong>
+                        </label>
+                        <InputText id="Nombres" 
+                                    class="form-control" 
+                                    @bind-Value="autor.Nombres" />
+
+                        <ValidationMessage For="() => autor.Nombres" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="Nacionalidad">
+                            <strong>Nacionalidad</strong>
+                        </label>
+                        <InputText id="Nacionalidad" 
+                                    class="form-control" 
+                                    @bind-Value="autor.Nacionalidad" />
+                                    
+                        <ValidationMessage For="() => autor.Nacionalidad" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="FechaNacimiento">
+                            <strong>Fecha de nacimiento</strong>
+                            </label>
+                        <InputDate id="FechaNacimiento" 
+                                    class="form-control" 
+                                    @bind-Value="autor.FechaNacimiento" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="Sueldo">
+                            <strong>Sueldo</strong>
+                        </label>
+                        <InputNumber id="Sueldo" 
+                                        class="form-control" 
+                                        @bind-Value="autor.Sueldo" />
+
+                        <ValidationMessage For="() => autor.Sueldo" />
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(mensaje))
+                    {
+                        <div class="alert alert-danger" role="alert">@mensaje</div>
+                    }
+                </div>
+                <div class="card-footer d-flex justify-content-center gap-2">
+                    <button type="button" 
+                            class="btn btn-secondary" 
+                            @onclick="Volver">
+                        Volver
+                    </button>
+                    <button type="submit" 
+                            class="btn btn-primary">
+                        Guardar cambios
+                    </button>
+                    <button type="button" 
+                            class="btn btn-danger" 
+                            @onclick="MostrarConfirmacion">
+                        Eliminar
+                    </button>
+                </div>
+            </EditForm>
+        }
+        else if (string.IsNullOrWhiteSpace(mensaje))
+        {
+            <div class="card-body text-center">Cargando autor</div>
+        }
+        else
+        {
+            <div class="card-body">
+                <div class="alert alert-danger" 
+                            role="alert">
+                            @mensaje
+                </div>
+                <button type="button" 
+                        class="btn btn-secondary" 
+                        @onclick="Volver">Volver
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@if (mostrarConfirmacion)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title">Confirmar eliminación</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p>¿Seguro que desea eliminar este autor?</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" 
+                            class="btn btn-secondary"
+                            @onclick="CancelarEliminar">
+                            Cancelar
+                    </button>
+                    <button type="button" 
+                            class="btn btn-danger" 
+                            @onclick="ConfirmarEliminar">
+                        Sí, eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter]
+    public int IdAutor { get; set; }
+
+    private Modelo1? autor;
+    private string mensaje = string.Empty;
+    private bool mostrarConfirmacion;
+
+    protected override async Task OnInitializedAsync()
+    {
+        autor = await Autorservices.Buscar(IdAutor);
+        if (autor is null)
+        {
+            mensaje = "No se encontró el autor.";
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (autor is null)
+        {
+            return;
+        }
+
+        if (autor.FechaNacimiento > DateTime.Today)
+        {
+            mensaje = "La fecha de nacimiento no puede ser futura.";
+            return;
+        }
+
+        mensaje = string.Empty;
+        if (await Autorservices.Modificar(autor))
+        {
+            Volver();
+        }
+        else
+        {
+            mensaje = "Error al modificar el autor.";
+        }
+    }
+
+    private void MostrarConfirmacion() => mostrarConfirmacion = true;
+
+    private void CancelarEliminar() => mostrarConfirmacion = false;
+
+    private async Task ConfirmarEliminar()
+    {
+        mostrarConfirmacion = false;
+        if (await Autorservices.Eliminar(IdAutor))
+        {
+            Volver();
+        }
+        else
+        {
+            mensaje = "Error al eliminar el autor.";
+        }
+    }
+
+    private void Volver(){
+        Navigation.NavigateTo("/Index");
+    }
+}

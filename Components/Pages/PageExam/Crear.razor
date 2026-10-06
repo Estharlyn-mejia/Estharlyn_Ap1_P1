@@ -1,0 +1,98 @@
+@page "/Crear"
+@inject Services1 Autorservices
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Crear Autor</PageTitle>
+
+<EditForm Model="autor" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="container mt-4">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h3>Crear Autor</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label" for="Nombres">Nombres</label>
+                    <InputText id="Nombres" class="form-control" @bind-Value="autor.Nombres" />
+                    <ValidationMessage For="() => autor.Nombres" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Nacionalidad">Nacionalidad</label>
+                    <InputText id="Nacionalidad" 
+                                class="form-control" 
+                                @bind-Value="autor.Nacionalidad" />
+                                
+                    <ValidationMessage For="() => autor.Nacionalidad" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="FechaNacimiento">
+                        <strong>Fecha de nacimiento</strong>
+                    </label>
+                    <InputDate id="FechaNacimiento" 
+                                class="form-control" 
+                                @bind-Value="autor.FechaNacimiento" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Sueldo">
+                        <strong>Sueldo</strong>
+                    </label>
+                    <InputNumber id="Sueldo" 
+                                class="form-control" 
+                                @bind-Value="autor.Sueldo" />
+
+                    <ValidationMessage For="() => autor.Sueldo" />
+                </div>
+                @if (!string.IsNullOrWhiteSpace(mensaje))
+                {
+                    <div class="alert alert-danger" 
+                        role="alert">
+                        @mensaje
+                    </div>
+                }
+            </div>
+            <div class="card-footer text-center">
+                <button type="button" 
+                        class="btn btn-outline-secondary" 
+                        @onclick="Volver">
+                    Volver
+                </button>
+                <button type="submit" 
+                        class="btn btn-outline-primary">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private Modelo1 autor { get; set; } = new();
+    private string mensaje = string.Empty;
+
+    private async Task Guardar()
+    {
+        if (autor.FechaNacimiento > DateTime.Today)
+        {
+            mensaje = "La fecha de nacimiento no puede ser futura.";
+            return;
+        }
+
+        if (await Autorservices.Guardar(autor))
+        {
+            Volver();
+        }
+        else
+        {
+            mensaje = "Error al guardar el autor.";
+        }
+    }
+
+    public void Volver()
+    {
+        Navigation.NavigateTo("/Index");
+    }
+}
